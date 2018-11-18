@@ -1,9 +1,9 @@
 LIB = bcprov-jdk15on-160.jar
-JAVA_SOURCE = $(shell find . -depth 1 -name '*.java')
+JAVA_SOURCE = *.java
 JAVAC = javac
 JVM = java
 JAR = jar
-MAIN = BlockChain
+MAIN = BrickChain
 
 .java: $(JAVA_SOURCE)
 	$(JAVAC) -cp "$(LIB):." $?
