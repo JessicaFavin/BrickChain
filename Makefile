@@ -1,5 +1,5 @@
 LIB = bcprov-jdk15on-160.jar
-JAVA_SOURCE = *.java
+JAVA_SOURCE = $(shell find . -maxdepth 1 -name "*.java")
 JAVAC = javac
 JVM = java
 JAR = jar
