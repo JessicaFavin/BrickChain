@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.Security;
 import java.security.KeyPair;
+
 public class BrickChain {
     public static void main(String[] args) {
         Security.addProvider(new BouncyCastleProvider());
@@ -50,7 +51,7 @@ public class BrickChain {
         PrivateKey sk1, sk2, sk3;
         try{
 
-            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("c2pnb163v1");
+            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("prime192v1");
             KeyPairGenerator g = KeyPairGenerator.getInstance("ECDSA", "BC");
             g.initialize(ecSpec, new SecureRandom());
             KeyPair pair = g.generateKeyPair();
@@ -66,9 +67,13 @@ public class BrickChain {
             vk3 = pair.getPublic();
             sk3 = pair.getPrivate();
             System.out.println("\n*** Key Generation ***");
+            System.out.println("Encoding = "+vk1.getFormat());
             System.out.println("Wallet 1 = vk1 = "+Hex.toHexString(vk1.getEncoded()));
+            System.out.println("Private 1 = sk1 = "+Hex.toHexString(sk1.getEncoded()));
             System.out.println("Wallet 2 = vk2 = "+Hex.toHexString(vk2.getEncoded()));
+            System.out.println("Private 2 = sk2 = "+Hex.toHexString(sk2.getEncoded()));
             System.out.println("Wallet 3 = vk3 = "+Hex.toHexString(vk3.getEncoded()));
+            System.out.println("Private 3 = sk3 = "+Hex.toHexString(sk3.getEncoded()));
 
 
             //------------------------------------------------------------------------------------------------------
@@ -84,13 +89,17 @@ public class BrickChain {
             System.out.println("              = "+h1);
             //-------------------------------------------------------------------------------------------------------
             byte[] data = "test".getBytes("UTF8");
-            Signature sig = Signature.getInstance("SHA256withECDSA");
+            Signature sig = Signature.getInstance("SHA256withECDSA", "BC");
             sig.initSign(sk1);
             sig.update(data);
             byte[] signatureBytes = sig.sign();
+            System.out.println("--------------------------------------------");
+            System.out.println(signatureBytes.length);
+            System.out.println(Hex.toHexString(signatureBytes));
             sig.initVerify(vk1);
             sig.update(data);
-            //System.out.println(sig.verify(signatureBytes));
+            System.out.println(sig.verify(signatureBytes));
+            System.out.println("--------------------------------------------");
             //--> true
 
             System.out.println("Add a New Block '"+Hex.toHexString(vk1.getEncoded()));
