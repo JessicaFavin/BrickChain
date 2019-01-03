@@ -22,28 +22,28 @@ public class BrickChain {
         h0 = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
         //------------------------------------------------------------------------------------------------------
         System.out.println("*** SHA3 Vector Tests ***");
-        System.out.println("''      -> "+sha3(""));
-        System.out.println("'abc'   -> "+sha3("abc"));
+        System.out.println("''      -> "+Utils.sha3(""));
+        System.out.println("'abc'   -> "+Utils.sha3("abc"));
         //------------------------------------------------------------------------------------------------------
         System.out.println("\n*** Hash Chain ***");
         System.out.println("Init the Hash Chain: h0 = "+h0);
-        h1 = sha3(h0+"a");
+        h1 = Utils.sha3(h0+"a");
         System.out.println("Add a New Block 'a': h1 = "+h1);
-        h2 = sha3(h1+"b");
+        h2 = Utils.sha3(h1+"b");
         System.out.println("Add a New Block 'b': h2 = "+h2);
         //------------------------------------------------------------------------------------------------------
         System.out.println("\n*** Hash Chain with Proof of Work ***");
         System.out.println("Init the Hash Chain: h0 = "+h0);
         //r1 = "5f4ed62e156a501e";
-        r1 = findSalt(h0+"a");
-        h1 = sha3(h0+"a"+r1);
-        System.out.println("Add a New Block 'a': h1 = SHA3("+h0
+        r1 = Utils.findSalt(h0+"a");
+        h1 = Utils.sha3(h0+"a"+r1);
+        System.out.println("Add a New Block 'a': h1 = Utils.sha3("+h0
         +"\n                               || a || "+r1
         +")\n                        = "+h1);
 
-        r2 = findSalt(h1+"b");
-        h2 = sha3(h1+"b"+r2);
-        System.out.println("Add a New Block 'b': h2 = SHA3("+h1
+        r2 = Utils.findSalt(h1+"b");
+        h2 = Utils.sha3(h1+"b"+r2);
+        System.out.println("Add a New Block 'b': h2 = Utils.sha3("+h1
         +"\n                               || b || "+r2
         +")\n                        = "+h2);
         //------------------------------------------------------------------------------------------------------
@@ -79,8 +79,8 @@ public class BrickChain {
             //------------------------------------------------------------------------------------------------------
             System.out.println("\n*** BlockChain of Transactions ***");
             System.out.println("Init the Hash Chain: h0 = "+h0);
-            r1 = findSalt(h0+Hex.toHexString(vk1.getEncoded())+" receives 10 Euros");
-            h1 = sha3(h0+Hex.toHexString(vk1.getEncoded())+" receives 10 Euros"+r1);
+            r1 = Utils.findSalt(h0+Hex.toHexString(vk1.getEncoded())+" receives 10 Euros");
+            h1 = Utils.sha3(h0+Hex.toHexString(vk1.getEncoded())+" receives 10 Euros"+r1);
 
             System.out.println("Add a New Block '"+Hex.toHexString(vk1.getEncoded())+" \n\t\treceives 10 Euros'");
             System.out.println("   -> h1 = SHA3("+h0+" ");
@@ -132,34 +132,4 @@ public class BrickChain {
         }
     }
 
-    /*
-    * https://stackoverflow.com/questions/11208479/how-do-i-initialize-a-byte-array-in-java#11208685
-    */
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-            + Character.digit(s.charAt(i+1), 16));
-        }
-        return data;
-    }
-
-    public static String sha3(String input) {
-        DigestSHA3 digestSHA3 = new Digest256();
-        byte[] digest = digestSHA3.digest(input.getBytes());
-        return Hex.toHexString(digest);
-    }
-
-    public static String findSalt(String h0) {
-        Long r = 0L;
-        String h1;
-        do {
-            h1 = sha3(h0+Long.toHexString(r));
-            r++;
-
-        } while(!h1.endsWith("0000") && !Long.toHexString(r).equals("ffffffffffffffff"));
-
-        return Long.toHexString(--r);
-    }
 }
