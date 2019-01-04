@@ -1,33 +1,45 @@
-import org.bouncycastle.jcajce.provider.digest.SHA3.DigestSHA3;
-import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.util.encoders.Hex;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.Security;
-import java.security.KeyPair;
-
 public class Block {
-    String previousBlock;
-    String transaction;
-    String salt;
-    String hash;
 
-    public Block(String previousBlock, String transaction) {
-        this.previousBlock = previousBlock;
+    public String previousBlock;
+    public String transaction;
+    public String signedTx;
+    public String salt;
+    public String hash;
+
+    public Block(Block previousBlock, String transaction, boolean salted) {
+        this.previousBlock = previousBlock.hash;
         this.transaction = transaction;
-        this.salt = Utils.findSalt(this.previousBlock+this.transaction);
+        this.signedTx = "";
+        if(salted) {
+            this.salt = Utils.findSalt(this.previousBlock+this.transaction);
+        } else {
+            this.salt = "";
+        }
         this.hash = Utils.sha3(this.previousBlock+this.transaction+this.salt);
+    }
+
+    public Block(Block previousBlock, String transaction, String signedTx, boolean salted) {
+        this.previousBlock = previousBlock.hash;
+        this.transaction = transaction;
+        this.signedTx = signedTx;
+        if(salted) {
+            this.salt = Utils.findSalt(this.previousBlock+this.transaction+this.signedTx);
+        } else {
+            this.salt = "";
+        }
+        this.hash = Utils.sha3(this.previousBlock+this.transaction+this.signedTx+this.salt);
+    }
+
+    public Block(String hash) {
+        this.previousBlock = "";
+        this.transaction = "";
+        this.salt = "";
+        this.hash = hash;
     }
 
     @Override
     public String toString() {
         return this.hash;
     }
+
 }

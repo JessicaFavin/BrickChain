@@ -1,19 +1,26 @@
 import org.bouncycastle.jcajce.provider.digest.SHA3.DigestSHA3;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.util.encoders.Hex;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.Security;
-import java.security.KeyPair;
 
-public class Utils {
+import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.math.BigInteger;
+
+public final class Utils {
+
+    public static byte[] sha1(String input) {
+        try {
+            MessageDigest hash = MessageDigest.getInstance("SHA-1", "BC");
+            hash.update(input.getBytes());
+            return hash.digest();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static String sha3(String input) {
         DigestSHA3 digestSHA3 = new Digest256();
@@ -33,12 +40,12 @@ public class Utils {
         return Long.toHexString(--r);
     }
 
-    public static boolean verifiy(String str, PublicKey pubK, Signature sig, byte[] signatureBytes) {
+    public static boolean verify(ECPublicKeyParameters pubK, String msg, BigInteger r, BigInteger s) {
         try {
-            byte[] data = str.getBytes("UTF8");
-            sig.initVerify(pubK);
-            sig.update(data);
-            return sig.verify(signatureBytes);
+            ECDSASigner sig = new ECDSASigner();
+            byte[] data = Utils.sha1(msg);
+            sig.init(false, pubK);
+            return sig.verifySignature(data, r, s);
         } catch (Exception e) {
             e.printStackTrace();
         }
