@@ -22,7 +22,7 @@ public class BlockChain {
 
     public static void main(String[] args) {
         Security.addProvider(new BouncyCastleProvider());
-        BrickChain blockChain = new BrickChain();
+        BlockChain blockChain = new BlockChain();
 
         Block block0, block1, block2, block3;
         Wallet wallet1, wallet2, wallet3;
@@ -55,7 +55,7 @@ public class BlockChain {
         //------------------------------------------------------------------------------------------------------
 
         System.out.println("\n\n*** Hash Chain with Proof of Work ***\n");
-        blockChain = new BrickChain();
+        blockChain = new BlockChain();
         System.out.println("Init the Hash Chain: h0 = "+block0);
         blockChain.add(block0);
 
@@ -87,7 +87,7 @@ public class BlockChain {
 
         System.out.println("\n\n*** BlockChain of Transactions ***\n");
 
-        blockChain = new BrickChain();
+        blockChain = new BlockChain();
         System.out.println("Init the Hash Chain: h0 = "+block0);
         blockChain.add(block0);
 
